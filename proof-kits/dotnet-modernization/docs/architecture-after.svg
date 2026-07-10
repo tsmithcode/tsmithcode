@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">Bounded .NET 8 modernization slice</title>
+  <desc id="desc">A versioned API, application boundary, pricing policy, idempotency, persistence, outbox, and operations evidence replace the coupled workflow.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#062b32"/>
+      <stop offset="1" stop-color="#07101d"/>
+    </linearGradient>
+    <filter id="shadow"><feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#000" flood-opacity=".35"/></filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#67e8f9"/></marker>
+  </defs>
+  <rect width="1200" height="630" rx="28" fill="url(#bg)"/>
+  <text x="64" y="72" fill="#67e8f9" font-family="Arial,sans-serif" font-size="20" font-weight="700" letter-spacing="2">AFTER · BOUNDED .NET 8 SLICE</text>
+  <text x="64" y="122" fill="#fff" font-family="Arial,sans-serif" font-size="42" font-weight="800">One business capability. Explicit controls.</text>
+  <text x="64" y="158" fill="#cbd5e1" font-family="Arial,sans-serif" font-size="20">Preserve parity, prevent duplicates, produce evidence, then expand.</text>
+
+  <g filter="url(#shadow)">
+    <rect x="55" y="245" width="180" height="105" rx="18" fill="#0d3640" stroke="#67e8f9" stroke-width="2"/>
+    <text x="145" y="286" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="21" font-weight="700">Caller</text>
+    <text x="145" y="320" text-anchor="middle" fill="#a5f3fc" font-family="Arial,sans-serif" font-size="16">stable operation key</text>
+
+    <rect x="300" y="205" width="205" height="185" rx="20" fill="#0d3640" stroke="#67e8f9" stroke-width="2"/>
+    <text x="402" y="245" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="22" font-weight="800">Versioned API</text>
+    <text x="402" y="281" text-anchor="middle" fill="#a5f3fc" font-family="Arial,sans-serif" font-size="16">validation</text>
+    <text x="402" y="310" text-anchor="middle" fill="#a5f3fc" font-family="Arial,sans-serif" font-size="16">Problem Details</text>
+    <text x="402" y="339" text-anchor="middle" fill="#a5f3fc" font-family="Arial,sans-serif" font-size="16">correlation ID</text>
+
+    <rect x="565" y="205" width="250" height="185" rx="20" fill="#123a37" stroke="#5eead4" stroke-width="2"/>
+    <text x="690" y="245" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="22" font-weight="800">Application boundary</text>
+    <text x="690" y="281" text-anchor="middle" fill="#99f6e4" font-family="Arial,sans-serif" font-size="16">idempotency</text>
+    <text x="690" y="310" text-anchor="middle" fill="#99f6e4" font-family="Arial,sans-serif" font-size="16">pricing parity</text>
+    <text x="690" y="339" text-anchor="middle" fill="#99f6e4" font-family="Arial,sans-serif" font-size="16">bounded transaction</text>
+
+    <rect x="875" y="195" width="265" height="95" rx="18" fill="#10263d" stroke="#60a5fa" stroke-width="2"/>
+    <text x="1007" y="235" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="21" font-weight="700">Order store</text>
+    <text x="1007" y="264" text-anchor="middle" fill="#bfdbfe" font-family="Arial,sans-serif" font-size="16">durable uniqueness decision</text>
+
+    <rect x="875" y="325" width="265" height="95" rx="18" fill="#10263d" stroke="#60a5fa" stroke-width="2"/>
+    <text x="1007" y="365" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="21" font-weight="700">Outbox receipt</text>
+    <text x="1007" y="394" text-anchor="middle" fill="#bfdbfe" font-family="Arial,sans-serif" font-size="16">order.accepted.v1</text>
+  </g>
+
+  <path d="M235 297 H292" stroke="#67e8f9" stroke-width="4" marker-end="url(#arrow)"/>
+  <path d="M505 297 H557" stroke="#67e8f9" stroke-width="4" marker-end="url(#arrow)"/>
+  <path d="M815 260 H867" stroke="#67e8f9" stroke-width="4" marker-end="url(#arrow)"/>
+  <path d="M815 335 H867" stroke="#67e8f9" stroke-width="4" marker-end="url(#arrow)"/>
+
+  <rect x="55" y="470" width="1085" height="105" rx="20" fill="#092b35" stroke="#22d3ee"/>
+  <text x="598" y="509" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="22" font-weight="800">Acceptance evidence</text>
+  <text x="598" y="543" text-anchor="middle" fill="#a5f3fc" font-family="Arial,sans-serif" font-size="17">characterization · API smoke · migration reconciliation · health · JSON logs · risk register · go/no-go report</text>
+</svg>

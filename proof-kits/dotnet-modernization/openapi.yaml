@@ -1,0 +1,197 @@
+openapi: 3.0.3
+info:
+  title: TSmithCode .NET Modernization Proof API
+  version: 1.0.0
+  description: >-
+    Public synthetic contract demonstrating a bounded .NET 8 modernization slice.
+    No client source code, credentials, or production data are included.
+servers:
+  - url: http://127.0.0.1:5078
+paths:
+  /health:
+    get:
+      summary: Return service health and UTC receipt time
+      operationId: getHealth
+      responses:
+        '200':
+          description: Healthy service
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+  /api/v1/orders:
+    post:
+      summary: Create an order once using an idempotency key
+      operationId: createOrder
+      parameters:
+        - in: header
+          name: Idempotency-Key
+          required: true
+          schema:
+            type: string
+            minLength: 1
+        - in: header
+          name: X-Correlation-ID
+          required: false
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderCommand'
+      responses:
+        '201':
+          description: New order created
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderReceipt'
+        '200':
+          description: Existing order returned for a repeated idempotency key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderReceipt'
+        '422':
+          description: Explicit validation problem
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblem'
+  /api/v1/orders/{orderId}:
+    get:
+      summary: Retrieve the persisted order receipt
+      operationId: getOrder
+      parameters:
+        - in: path
+          name: orderId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Order found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderRecord'
+        '404':
+          description: Order not found
+  /api/v1/outbox:
+    get:
+      summary: Inspect synthetic integration receipts
+      operationId: getOutbox
+      responses:
+        '200':
+          description: Outbox messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OutboxMessage'
+components:
+  schemas:
+    CreateOrderCommand:
+      type: object
+      required: [customerId, quantity, unitPrice, customerTier, priority]
+      properties:
+        customerId:
+          type: string
+        quantity:
+          type: integer
+        unitPrice:
+          type: number
+          format: decimal
+        customerTier:
+          type: string
+          example: Gold
+        priority:
+          type: boolean
+    OrderReceipt:
+      type: object
+      required: [orderId, idempotencyKey, total, wasDuplicate, createdAt, errors, succeeded]
+      properties:
+        orderId:
+          type: string
+          format: uuid
+        idempotencyKey:
+          type: string
+        total:
+          type: number
+          format: decimal
+        wasDuplicate:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationIssue'
+        succeeded:
+          type: boolean
+    ValidationIssue:
+      type: object
+      required: [field, code, message]
+      properties:
+        field:
+          type: string
+        code:
+          type: string
+        message:
+          type: string
+    ValidationProblem:
+      type: object
+      properties:
+        type:
+          type: string
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationIssue'
+    OrderRecord:
+      type: object
+      additionalProperties: true
+    OutboxMessage:
+      type: object
+      required: [messageId, orderId, eventType, payload, createdAt]
+      properties:
+        messageId:
+          type: string
+          format: uuid
+        orderId:
+          type: string
+          format: uuid
+        eventType:
+          type: string
+        payload:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+    HealthResponse:
+      type: object
+      required: [status, service, utc]
+      properties:
+        status:
+          type: string
+          example: healthy
+        service:
+          type: string
+        utc:
+          type: string
+          format: date-time
