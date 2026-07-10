@@ -186,23 +186,23 @@ def main() -> int:
         if path.is_file()
         and path.suffix.lower() in {".md", ".cs", ".py", ".sh", ".ps1", ".yaml", ".yml", ".json", ".csv", ".props", ".csproj", ".svg"}
     ]
+    scanner_path = Path(__file__).resolve()
+    scanned_artifact_files = [path for path in public_text_files if path.resolve() != scanner_path]
 
     local_path_patterns = [re.compile(r"/Users/[^/\s]+"), re.compile(r"[A-Za-z]:\\Users\\[^\\\s]+")]
     leaked_paths: list[str] = []
-    for path in public_text_files:
+    for path in scanned_artifact_files:
         text = path.read_text(encoding="utf-8")
         if any(pattern.search(text) for pattern in local_path_patterns):
             leaked_paths.append(str(path.relative_to(ROOT)))
     results.append(check("no-local-user-paths", not leaked_paths, "files=" + repr(leaked_paths)))
 
-    scanner_path = Path(__file__).resolve()
-    brand_scan_files = [path for path in public_text_files if path.resolve() != scanner_path]
     blocked_brand_fragments = [
         "".join(("g", "v", "o")),
         "".join(("good", "vibes", "only")),
     ]
     brand_leaks: list[str] = []
-    for path in brand_scan_files:
+    for path in scanned_artifact_files:
         normalized = re.sub(r"[^a-z0-9]+", "", path.read_text(encoding="utf-8").lower())
         for blocked in blocked_brand_fragments:
             if blocked in normalized:
