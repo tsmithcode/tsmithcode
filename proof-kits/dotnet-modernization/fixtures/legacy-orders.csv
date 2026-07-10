@@ -1,0 +1,5 @@
+legacy_id,customer_id,quantity,unit_price,tier,priority
+LEG-1001,C-100,10,100.00,Gold,true
+LEG-1002,C-200,4,250.00,Silver,false
+LEG-1002,C-200,4,250.00,Silver,false
+LEG-1003,C-300,2,500.00,Standard,true
