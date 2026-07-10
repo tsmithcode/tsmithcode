@@ -4,7 +4,6 @@ from __future__ import annotations
 import csv
 import json
 import re
-import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
@@ -13,6 +12,7 @@ REPORTS = ROOT / "reports"
 
 REQUIRED_FILES = [
     "README.md",
+    ".gitignore",
     "Directory.Build.props",
     "global.json",
     "openapi.yaml",
@@ -28,12 +28,14 @@ REQUIRED_FILES = [
     "src/Modernization.Api/Program.cs",
     "tests/Modernization.ProofTests/Modernization.ProofTests.csproj",
     "tests/Modernization.ProofTests/Program.cs",
+    "tools/preflight.py",
     "tools/proof_harness.py",
     "docs/architecture-and-decisions.md",
     "docs/business-case.md",
     "docs/architecture-before.svg",
     "docs/architecture-after.svg",
     "media/flagship-social-card.svg",
+    "media/three-minute-demo-script.md",
 ]
 
 XML_FILES = [
@@ -62,7 +64,7 @@ SOURCE_MARKERS = {
     "src/Modernization.Api/Program.cs": [
         'MapGet("/health"',
         'MapPost("/api/v1/orders"',
-        'X-Correlation-ID',
+        "X-Correlation-ID",
         "Results.Problem",
     ],
     "tests/Modernization.ProofTests/Program.cs": [
@@ -95,7 +97,7 @@ def main() -> int:
     for relative in XML_FILES:
         try:
             ET.parse(ROOT / relative)
-        except Exception as exc:  # noqa: BLE001 - report exact malformed artifact
+        except Exception as exc:  # report exact malformed artifact
             xml_failures.append(f"{relative}: {exc}")
     results.append(check("xml-and-svg-well-formed", not xml_failures, "failures=" + repr(xml_failures)))
 
@@ -105,30 +107,30 @@ def main() -> int:
         roll_forward = global_config["sdk"]["rollForward"]
         global_ok = sdk_version.startswith("8.") and roll_forward == "latestFeature"
         global_detail = f"sdk={sdk_version}; rollForward={roll_forward}"
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         global_ok = False
         global_detail = str(exc)
     results.append(check("dotnet-sdk-contract", global_ok, global_detail))
 
     try:
-        modern = json.loads((ROOT / "fixtures/modern-orders.json").read_text(encoding="utf-8"))
+        modern = json.loads((ROOT / "fixtures" / "modern-orders.json").read_text(encoding="utf-8"))
         modern_ids = [row["legacyId"] for row in modern]
         fixture_json_ok = len(modern_ids) == len(set(modern_ids)) == 3
         fixture_json_detail = f"modernIds={modern_ids}"
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         fixture_json_ok = False
         fixture_json_detail = str(exc)
     results.append(check("modern-fixture-json", fixture_json_ok, fixture_json_detail))
 
     try:
-        with (ROOT / "fixtures/legacy-orders.csv").open(newline="", encoding="utf-8") as handle:
+        with (ROOT / "fixtures" / "legacy-orders.csv").open(newline="", encoding="utf-8") as handle:
             rows = list(csv.DictReader(handle))
         headers = list(rows[0].keys()) if rows else []
         ids = [row["legacy_id"] for row in rows]
         duplicate_ids = sorted({value for value in ids if ids.count(value) > 1})
         csv_ok = headers == ["legacy_id", "customer_id", "quantity", "unit_price", "tier", "priority"] and duplicate_ids == ["LEG-1002"]
         csv_detail = f"rows={len(rows)}; duplicates={duplicate_ids}; headers={headers}"
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         csv_ok = False
         csv_detail = str(exc)
     results.append(check("legacy-fixture-shape", csv_ok, csv_detail))
