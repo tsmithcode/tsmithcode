@@ -1,0 +1,74 @@
+name: .NET modernization proof
+
+on:
+  push:
+    branches:
+      - main
+      - feat/flagship-dotnet-modernization-proof
+    paths:
+      - 'proof-kits/dotnet-modernization/**'
+      - '.github/workflows/dotnet-modernization-proof.yml'
+  pull_request:
+    paths:
+      - 'proof-kits/dotnet-modernization/**'
+      - '.github/workflows/dotnet-modernization-proof.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dotnet-modernization-proof-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Build, run, and verify evidence
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Inspect native runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          git --version
+          dotnet --info
+          python3 --version
+
+      - name: Checkout exact event source without reusable actions
+        shell: bash
+        env:
+          REPOSITORY: ${{ github.repository }}
+          EVENT_REF: ${{ github.ref }}
+        run: |
+          set -euo pipefail
+          rm -rf workspace
+          git init workspace
+          git -C workspace remote add origin "https://github.com/${REPOSITORY}.git"
+          git -C workspace fetch --depth=1 origin "${EVENT_REF}"
+          git -C workspace checkout --detach FETCH_HEAD
+          git -C workspace rev-parse HEAD
+
+      - name: Run complete proof gate
+        shell: bash
+        working-directory: workspace/proof-kits/dotnet-modernization
+        run: |
+          set -euo pipefail
+          chmod +x run-proof.sh
+          ./run-proof.sh
+
+      - name: Verify release decision
+        shell: bash
+        working-directory: workspace/proof-kits/dotnet-modernization
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path('reports/modernization-readiness.json').read_text())
+          assert report['readinessScore'] == 100, report
+          assert report['decision'] == 'GO: fund a bounded first modernization slice', report
+          assert all(report['gates'].values()), report
+          print('PASS readiness score, decision, and every evidence gate')
+          PY
