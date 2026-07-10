@@ -4,7 +4,7 @@
 
 TSmithCode is the public software-consulting and technical-authority surface for work that must survive real users, real data, operational constraints, and handoff pressure.
 
-**Artifact class:** Authority hub and runnable software proof-kit system.
+**Artifact class:** Authority hub and software proof-system index.
 
 ## Evaluator question
 
@@ -22,25 +22,27 @@ Use this profile to select the correct proof route, evaluate architecture and ex
 
 ## Fastest evaluation route
 
-1. Start with the relevant public proof kit below.
-2. Run or inspect its verification path and generated evidence.
-3. Review the stated proof boundary and production gaps.
+1. Start with the relevant public proof surface below.
+2. Confirm whether it is runnable proof or a framework-level decision artifact.
+3. Inspect its evidence route, maturity statement, and proof boundary.
 4. Route the next conversation through TSmithCode or CAD Guardian according to the engagement type.
 
-## Runnable software proof kits
+## Public software proof system
 
-These public kits use synthetic or public-safe inputs and do not depend on private customer repositories.
+The proof system deliberately distinguishes executed evidence from framework-level decision artifacts.
 
-- [Flagship .NET modernization proof](proof-kits/dotnet-modernization) — characterization, parity, API contracts, idempotency, outbox, observability, migration reconciliation, and executive evidence.
-- [Data integration](proof-kits/data-integration) — validation, normalization, reject handling, and data-quality evidence.
-- [API contract readiness](proof-kits/api-contract) — schema, versioning, failure behavior, and integration boundaries.
-- [Release readiness](proof-kits/release-readiness) — build, test, deployment, rollback, and operational acceptance.
-- [Reporting quality](proof-kits/reporting-quality) — traceable metrics, reconciliation, and decision-ready outputs.
-- [AI workflow boundary](proof-kits/ai-workflow-boundary) — approval, provenance, fallback, and human-control boundaries.
-- [TypeScript UI readiness](proof-kits/typescript-ui) — interface-state, validation, accessibility, and release evidence.
-- [Autodesk software bridge](proof-kits/autodesk-software-bridge) — enterprise-software patterns at the Autodesk integration boundary.
+| Proof surface | Public maturity | Decision supported |
+|---|---|---|
+| [.NET modernization](proof-kits/dotnet-modernization) | Flagship runnable release candidate; production merge remains gated until a real independent .NET execution receipt exists | Whether to fund a bounded first modernization slice |
+| [Data integration](proof-kits/data-integration) | Framework-level decision artifact | Cleanup, contract mapping, private diagnostic, or first integration slice |
+| [API contract readiness](proof-kits/api-contract) | Framework-level decision artifact | Contract clarification, spike, diagnostic, or implementation slice |
+| [Release readiness](proof-kits/release-readiness) | Framework-level decision artifact | Go, conditional-go, hold, or smaller release slice |
+| [Reporting quality](proof-kits/reporting-quality) | Framework-level decision artifact | Decision-safe use, targeted remediation, or rebuild |
+| [AI workflow boundary](proof-kits/ai-workflow-boundary) | Framework-level decision artifact | Controlled pilot, narrower authority, more evaluation, or human-only |
+| [TypeScript UI readiness](proof-kits/typescript-ui) | Framework-level decision artifact | State cleanup, prototype, design-system work, or first UI slice |
+| [Autodesk software bridge](proof-kits/autodesk-software-bridge) | Framework-level decision artifact | General-software, CAD-native, private-sample, or bridge implementation route |
 
-## Supporting public proof system
+## Supporting public proof repositories
 
 | Repository | What it proves | Artifact class |
 |---|---|---|
@@ -89,5 +91,7 @@ CAD Guardian is the specialist service line for AutoCAD, Inventor, Revit, SolidW
 ## Public proof boundary
 
 These repositories demonstrate decision methods, architecture judgment, implementation patterns, release discipline, and evidence design. They do not expose private client files, production credentials, proprietary source code, raw correspondence, or invented customer results.
+
+A framework-level artifact is never presented as executed implementation proof. An executable artifact is not called complete without a real run receipt.
 
 The governing standard is [TSmithCode Public Proof Standard](docs/TSMITHCODE_PUBLIC_PROOF_STANDARD.md).
