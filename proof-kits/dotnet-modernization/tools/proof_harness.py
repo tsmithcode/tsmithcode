@@ -72,15 +72,19 @@ def request_json(method: str, url: str, body: dict[str, object] | None = None, h
 
 def smoke(base_url: str) -> dict[str, object]:
     deadline = time.time() + 30
-    health = None
+    health: dict[str, object] | None = None
+    health_status: int | None = None
     while time.time() < deadline:
         try:
-            status, health, _ = request_json("GET", f"{base_url}/health")
-            if status == 200:
+            status, candidate, _ = request_json("GET", f"{base_url}/health")
+            if status == 200 and candidate.get("status") == "healthy":
+                health_status = status
+                health = candidate
                 break
-        except Exception:
-            time.sleep(1)
-    if health is None:
+        except Exception:  # noqa: BLE001 - startup polling must tolerate connection errors
+            pass
+        time.sleep(1)
+    if health_status != 200 or health is None:
         raise RuntimeError("API did not become healthy within 30 seconds")
 
     command = {"customerId": "C-200", "quantity": 4, "unitPrice": 250, "customerTier": "Silver", "priority": False}
@@ -121,15 +125,18 @@ def smoke(base_url: str) -> dict[str, object]:
 
 
 def evidence() -> dict[str, object]:
+    preflight = json.loads((REPORTS / "preflight-report.json").read_text(encoding="utf-8"))
     test = json.loads((REPORTS / "test-receipt.json").read_text(encoding="utf-8"))
     api = json.loads((REPORTS / "api-smoke-receipt.json").read_text(encoding="utf-8"))
     migration = json.loads((REPORTS / "reconciliation-report.json").read_text(encoding="utf-8"))
+    architecture_text = (ROOT / "docs" / "architecture-and-decisions.md").read_text(encoding="utf-8").lower()
+    api_source = (ROOT / "src" / "Modernization.Api" / "Program.cs").read_text(encoding="utf-8")
     gates = {
+        "publicArtifactPreflight": preflight["status"] == "PASS",
         "characterizationAndParity": test["failed"] == 0,
         "apiContractAndReliability": api["status"] == "PASS",
         "migrationReconciliation": migration["status"] == "PASS",
-        "publicFixtureBoundary": True,
-        "rollbackAndObservabilityPlan": True,
+        "rollbackAndObservabilityPlan": "rollback" in architecture_text and "/health" in api_source and "X-Correlation-ID" in api_source,
     }
     score = round(sum(1 for value in gates.values() if value) / len(gates) * 100)
     report = {
@@ -139,6 +146,7 @@ def evidence() -> dict[str, object]:
         "decision": "GO: fund a bounded first modernization slice" if score == 100 else "HOLD: resolve failed gates",
         "gates": gates,
         "evidence": {
+            "preflight": "reports/preflight-report.json",
             "tests": "reports/test-receipt.json",
             "api": "reports/api-smoke-receipt.json",
             "migration": "reports/reconciliation-report.json",
@@ -172,6 +180,7 @@ For a workflow handling 2,000 orders per month, preventing a 1% duplicate/rework
 
 ## Evidence
 
+- Public artifact preflight: {preflight['status']}
 - Readiness score: {score}/100
 - Tests passed: {test['passed']}/{test['total']}
 - API smoke: {api['status']}
