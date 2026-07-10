@@ -31,6 +31,7 @@ REQUIRED_FILES = [
     "tools/preflight.py",
     "tools/proof_harness.py",
     "docs/architecture-and-decisions.md",
+    "docs/brand-and-engagement-routing.md",
     "docs/business-case.md",
     "docs/architecture-before.svg",
     "docs/architecture-after.svg",
@@ -50,6 +51,18 @@ XML_FILES = [
 ]
 
 SOURCE_MARKERS = {
+    "README.md": [
+        "Brand and engagement routing",
+        "This repository is a TSmithCode.ai artifact",
+        "Related CAD and engineering automation lane",
+    ],
+    "docs/brand-and-engagement-routing.md": [
+        "TSmithCode.ai",
+        "CAD Guardian LLC",
+        "not as interchangeable identities",
+        "Evidence before claims",
+        "Route it to CAD Guardian",
+    ],
     "src/LegacyOrderEngine/LegacyOrderProcessor.cs": [
         "LegacyOrderProcessor",
         "CUSTOMER_REQUIRED",
@@ -141,7 +154,7 @@ def main() -> int:
         for marker in markers:
             if marker not in text:
                 marker_failures.append(f"{relative}: missing {marker}")
-    results.append(check("architecture-control-markers", not marker_failures, "failures=" + repr(marker_failures)))
+    results.append(check("architecture-and-brand-control-markers", not marker_failures, "failures=" + repr(marker_failures)))
 
     readme = (ROOT / "README.md").read_text(encoding="utf-8") if (ROOT / "README.md").is_file() else ""
     github_links = re.findall(r"https://github\.com/tsmithcode/[^)\s]+", readme)
@@ -152,11 +165,28 @@ def main() -> int:
         "https://tsmithcode.ai/software-discovery-diagnostic",
         "https://tsmithcode.ai/software-consulting-pricing",
         "https://tsmithcode.ai/software-proof-kits",
+        "https://www.cadguardian.com/",
     ]
     missing_ctas = [url for url in required_ctas if url not in readme]
-    results.append(check("discovery-to-cash-links", not missing_ctas, "missing=" + repr(missing_ctas)))
+    results.append(check("organization-routing-and-discovery-links", not missing_ctas, "missing=" + repr(missing_ctas)))
 
-    public_text_files = [path for path in ROOT.rglob("*") if path.is_file() and path.suffix.lower() in {".md", ".cs", ".py", ".sh", ".ps1", ".yaml", ".yml", ".json", ".csv", ".props", ".csproj", ".svg"}]
+    routing_text = (ROOT / "docs" / "brand-and-engagement-routing.md").read_text(encoding="utf-8") if (ROOT / "docs" / "brand-and-engagement-routing.md").is_file() else ""
+    routing_requirements = [
+        "one opportunity-routing system",
+        "Software architecture, modernization, and public technical authority",
+        "C2C procurement and delivery entity for CAD and engineering automation",
+        "Do not duplicate the same offer under both brands",
+    ]
+    missing_routing = [value for value in routing_requirements if value not in routing_text]
+    results.append(check("organization-brand-routing", not missing_routing, "missing=" + repr(missing_routing)))
+
+    public_text_files = [
+        path
+        for path in ROOT.rglob("*")
+        if path.is_file()
+        and path.suffix.lower() in {".md", ".cs", ".py", ".sh", ".ps1", ".yaml", ".yml", ".json", ".csv", ".props", ".csproj", ".svg"}
+    ]
+
     local_path_patterns = [re.compile(r"/Users/[^/\s]+"), re.compile(r"[A-Za-z]:\\Users\\[^\\\s]+")]
     leaked_paths: list[str] = []
     for path in public_text_files:
@@ -165,9 +195,23 @@ def main() -> int:
             leaked_paths.append(str(path.relative_to(ROOT)))
     results.append(check("no-local-user-paths", not leaked_paths, "files=" + repr(leaked_paths)))
 
+    scanner_path = Path(__file__).resolve()
+    brand_scan_files = [path for path in public_text_files if path.resolve() != scanner_path]
+    blocked_brand_fragments = [
+        "".join(("g", "v", "o")),
+        "".join(("good", "vibes", "only")),
+    ]
+    brand_leaks: list[str] = []
+    for path in brand_scan_files:
+        normalized = re.sub(r"[^a-z0-9]+", "", path.read_text(encoding="utf-8").lower())
+        for blocked in blocked_brand_fragments:
+            if blocked in normalized:
+                brand_leaks.append(f"{path.relative_to(ROOT)}:{blocked}")
+    results.append(check("work-safe-brand-boundary", not brand_leaks, "files=" + repr(brand_leaks)))
+
     passed = sum(1 for result in results if result["status"] == "PASS")
     report = {
-        "kit": "TSmithCode .NET Modernization Proof Kit",
+        "kit": "TSmithCode .NET Modernization Public Runnable Evaluation Kit",
         "checks": results,
         "passed": passed,
         "failed": len(results) - passed,
