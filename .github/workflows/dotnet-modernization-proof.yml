@@ -1,0 +1,71 @@
+name: .NET modernization proof
+
+on:
+  push:
+    branches:
+      - main
+      - feat/flagship-dotnet-modernization-proof
+    paths:
+      - proof-kits/dotnet-modernization/**
+      - .github/workflows/dotnet-modernization-proof.yml
+  pull_request:
+    paths:
+      - proof-kits/dotnet-modernization/**
+      - .github/workflows/dotnet-modernization-proof.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dotnet-modernization-proof-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Build, run, and verify evidence
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: proof-kits/dotnet-modernization
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run complete proof gate
+        run: |
+          chmod +x run-proof.sh
+          ./run-proof.sh
+
+      - name: Verify release decision
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path('reports/modernization-readiness.json').read_text())
+          assert report['readinessScore'] == 100, report
+          assert report['decision'] == 'GO: fund a bounded first modernization slice', report
+          assert all(report['gates'].values()), report
+          print('PASS readiness score, decision, and every evidence gate')
+          PY
+
+      - name: Upload evaluator evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dotnet-modernization-evidence
+          path: proof-kits/dotnet-modernization/reports/
+          if-no-files-found: error
+          retention-days: 30
