@@ -13,7 +13,7 @@
   <text x="64" y="78" fill="#67e8f9" font-family="Arial,sans-serif" font-size="22" font-weight="800" letter-spacing="3">TSMITHCODE.AI · PUBLIC ENGINEERING PROOF</text>
   <text x="64" y="155" fill="#fff" font-family="Arial,sans-serif" font-size="56" font-weight="900">.NET Modernization</text>
   <text x="64" y="217" fill="#fff" font-family="Arial,sans-serif" font-size="56" font-weight="900">without the rewrite gamble.</text>
-  <text x="64" y="265" fill="#cbd5e1" font-family="Arial,sans-serif" font-size="22">Clone. Run one command. Inspect generated evidence.</text>
+  <text x="64" y="265" fill="#cbd5e1" font-family="Arial,sans-serif" font-size="22">Download. Run one command. Inspect generated evidence.</text>
 
   <g filter="url(#shadow)">
     <rect x="64" y="325" width="500" height="200" rx="24" fill="#0c2538" stroke="#22d3ee" stroke-width="2"/>
@@ -30,5 +30,5 @@
   </g>
 
   <rect x="64" y="560" width="1072" height="2" fill="#164e63"/>
-  <text x="64" y="598" fill="#67e8f9" font-family="Arial,sans-serif" font-size="20" font-weight="800">github.com/tsmithcode/tsmithcode/proof-kits/dotnet-modernization</text>
+  <text x="64" y="598" fill="#67e8f9" font-family="Arial,sans-serif" font-size="18" font-weight="800">github.com/tsmithcode/tsmithcode/tree/main/proof-kits/dotnet-modernization</text>
 </svg>
