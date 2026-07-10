@@ -29,7 +29,7 @@ function Invoke-Python {
   param([string[]]$PythonArgs)
   & $PythonExe @PythonPrefix @PythonArgs
   if ($LASTEXITCODE -ne 0) {
-    throw "Python command failed with exit code $LASTEXITCODE: $($PythonArgs -join ' ')"
+    throw "Python command failed with exit code ${LASTEXITCODE}: $($PythonArgs -join ' ')"
   }
 }
 
