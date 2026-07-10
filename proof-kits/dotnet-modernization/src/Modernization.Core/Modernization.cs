@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Text.Json;
 
 namespace TSmithCode.Modernization.Core;
 
@@ -156,7 +157,7 @@ public sealed class OrderApplicationService(IOrderRepository repository, IClock 
             Guid.NewGuid(),
             order.OrderId,
             "order.accepted.v1",
-            $"{{\"orderId\":\"{order.OrderId}\",\"total\":{order.Total:0.00}}}",
+            JsonSerializer.Serialize(new { orderId = order.OrderId, total = order.Total }),
             order.CreatedAt);
 
         repository.Save(order, message);
